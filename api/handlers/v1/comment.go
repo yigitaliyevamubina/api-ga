@@ -5,6 +5,7 @@ import (
 	pbc "apii_gateway/genproto/comment_service"
 	"apii_gateway/pkg/logger"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
@@ -22,15 +23,16 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 		jspbMarshal protojson.MarshalOptions
 	)
 
-	err := c.BindJSON(&body)
+	jspbMarshal.UseProtoNames = true
+
+	err := c.ShouldBindJSON(&body)
+	fmt.Println(body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		h.log.Error("cannot bind json", logger.Error(err))
 	}
-
-	jspbMarshal.UseProtoNames = true
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
@@ -65,6 +67,8 @@ func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 		PostId: postId,
 	})
 
+	fmt.Println(response, "commentnttnntntn")
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -88,6 +92,8 @@ func (h *handlerV1) GetAllCommentsByOwnerId(c *gin.Context) {
 	response, err := h.serviceManager.CommentService().GetAllCommentsByOwnerId(ctx, &pbc.GetOwnerID{
 		OwnerId: ownerId,
 	})
+
+	fmt.Println(response)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

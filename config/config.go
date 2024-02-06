@@ -40,7 +40,7 @@ func Load() Config {
 	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST", "localhost"))
 	c.CommentServicePort = cast.ToInt(getOrReturnDefault("COMMENT_SERVICE_PORT", 7070))
 
-	c.CtxTimeOut = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 10))
+	c.CtxTimeOut = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 7))
 
 	return c
 }

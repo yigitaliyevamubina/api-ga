@@ -53,7 +53,7 @@ func NewServiceManager(cfg *config.Config) (IServiceManager, error) {
 	}
 
 	connComment, err := grpc.Dial(
-		fmt.Sprintf("$s:%d", cfg.CommentServiceHost, cfg.CommentServicePort),
+		fmt.Sprintf("%s:%d", cfg.CommentServiceHost, cfg.CommentServicePort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	serviceManager := &serviceManager{
