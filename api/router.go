@@ -49,6 +49,12 @@ func New(option Option) *gin.Engine {
 	api.GET("/comment/post/:id", handlerV1.GetAllCommentsByPostId)
 	api.GET("/comment/owner/:id", handlerV1.GetAllCommentsByOwnerId)
 
+	//likes
+	api.POST("/like/post", handlerV1.LikePost)
+	api.POST("/like/comment", handlerV1.LikeComment)
+	api.GET("/like/post/:post_id", handlerV1.GetLikeOwnersByPostId)
+	api.GET("/like/comment/:comment_id", handlerV1.GetLikeOwnersByCommentId)
+
 	//url:=ginSwagger.URL("swagger/doc.json")
 	//router.GET("/swagger/*any, ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	return router

@@ -3,6 +3,7 @@ package services
 import (
 	"apii_gateway/config"
 	pbc "apii_gateway/genproto/comment_service"
+	pbl "apii_gateway/genproto/like_service"
 	pbp "apii_gateway/genproto/post_service"
 	pbu "apii_gateway/genproto/user_service"
 	"fmt"
@@ -15,12 +16,14 @@ type IServiceManager interface {
 	UserService() pbu.UserServiceClient
 	PostService() pbp.PostServiceClient
 	CommentService() pbc.CommentServiceClient
+	LikeService() pbl.LikeServiceClient
 }
 
 type serviceManager struct {
 	userService    pbu.UserServiceClient
 	postService    pbp.PostServiceClient
 	commentService pbc.CommentServiceClient
+	likeService    pbl.LikeServiceClient
 }
 
 func (s *serviceManager) UserService() pbu.UserServiceClient {
@@ -33,6 +36,10 @@ func (s *serviceManager) PostService() pbp.PostServiceClient {
 
 func (s *serviceManager) CommentService() pbc.CommentServiceClient {
 	return s.commentService
+}
+
+func (s *serviceManager) LikeService() pbl.LikeServiceClient {
+	return s.likeService
 }
 
 func NewServiceManager(cfg *config.Config) (IServiceManager, error) {
@@ -56,10 +63,15 @@ func NewServiceManager(cfg *config.Config) (IServiceManager, error) {
 		fmt.Sprintf("%s:%d", cfg.CommentServiceHost, cfg.CommentServicePort),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 
+	connLike, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", cfg.LikeServiceHost, cfg.LikeServicePort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+
 	serviceManager := &serviceManager{
 		userService:    pbu.NewUserServiceClient(connUser),
 		postService:    pbp.NewPostServiceClient(connPost),
 		commentService: pbc.NewCommentServiceClient(connComment),
+		likeService:    pbl.NewLikeServiceClient(connLike),
 	}
 	return serviceManager, nil
 }

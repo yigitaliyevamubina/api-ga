@@ -17,6 +17,9 @@ type Config struct {
 	CommentServiceHost string
 	CommentServicePort int
 
+	LikeServiceHost string
+	LikeServicePort int
+
 	//context timeout in seconds
 	CtxTimeOut int
 
@@ -39,6 +42,8 @@ func Load() Config {
 	c.PostServicePort = cast.ToInt(getOrReturnDefault("POST_SERVICE_PORT", 8080))
 	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST", "localhost"))
 	c.CommentServicePort = cast.ToInt(getOrReturnDefault("COMMENT_SERVICE_PORT", 7070))
+	c.LikeServiceHost = cast.ToString(getOrReturnDefault("LIKE_SERVICE_HOST", "localhost"))
+	c.LikeServicePort = cast.ToInt(getOrReturnDefault("LIKE_SERVICE_PORT", 4040))
 
 	c.CtxTimeOut = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 7))
 
