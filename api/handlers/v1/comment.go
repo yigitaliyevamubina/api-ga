@@ -17,6 +17,16 @@ import (
 //rpc GetAllCommentsByOwnerId(GetOwnerID) returns (AllComments);
 
 // Create Comment
+// @Summary create comment
+// @Tags Comment
+// @Description Create Comment
+// @Accept json
+// @Produce json
+// @Param CommentInfo body models.Comment true "Create Comment"
+// @Success 201 {object} models.Comment
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/comment/create [post]
 func (h *handlerV1) CreateComment(c *gin.Context) {
 	var (
 		body        models.Comment
@@ -55,6 +65,16 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 }
 
 // Get All Comments By Post Id
+// @Summary get all comments by post id
+// @Tags Comment
+// @Description Get all comments by post id
+// @Accept json
+// @Produce json
+// @Param id path string true "post_id"
+// @Success 201 {object} models.Comments
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/comment/post/{id} [get]
 func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -81,6 +101,16 @@ func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 }
 
 // Get All Comments By Owner Id
+// @Summary get all comments by owner id
+// @Tags Comment
+// @Description Get all comments by owner id
+// @Accept json
+// @Produce json
+// @Param id path string true "owne_id"
+// @Success 201 {object} models.Comments
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/comment/owner/{id} [get]
 func (h *handlerV1) GetAllCommentsByOwnerId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true

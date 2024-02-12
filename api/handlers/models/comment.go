@@ -6,3 +6,7 @@ type Comment struct {
 	PostId  string `json:"post_id"`
 	OwnerId string `json:"owner_id"`
 }
+
+type Comments struct {
+	Comments []*Comment
+}

@@ -16,6 +16,16 @@ import (
 //rpc GetLikeOwnersByPostId(GetPostId) returns (Post);
 //rpc GetLikeOwnersByCommentId(GetCommentId) returns (Comment);
 
+// @Summary like post
+// @Tags Like
+// @Description Like post
+// @Accept json
+// @Produce json
+// @Param LikeInfo body models.PostLike true "Like post"
+// @Success 201 {object} models.Status
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/like/post [post]
 func (h *handlerV1) LikePost(c *gin.Context) {
 
 	var (
@@ -51,6 +61,16 @@ func (h *handlerV1) LikePost(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
+// @Summary like comment
+// @Tags Like
+// @Description Like comment
+// @Accept json
+// @Produce json
+// @Param LikeInfo body models.CommentLike true "Like comment"
+// @Success 201 {object} models.Status
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/like/comment [post]
 func (h *handlerV1) LikeComment(c *gin.Context) {
 	var (
 		body        models.CommentLike
@@ -90,6 +110,16 @@ func (h *handlerV1) LikeComment(c *gin.Context) {
 
 }
 
+// @Summary like owners by post id
+// @Tags Like
+// @Description Like owners by post id
+// @Accept json
+// @Produce json
+// @Param id path string true "post_id"
+// @Success 201 {object} models.ResponseLikePost
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/like/post/{id} [post]
 func (h *handlerV1) GetLikeOwnersByPostId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -114,6 +144,16 @@ func (h *handlerV1) GetLikeOwnersByPostId(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// @Summary like owners by comment id
+// @Tags Like
+// @Description Like owners by comment id
+// @Accept json
+// @Produce json
+// @Param id path string true "comment_id"
+// @Success 201 {object} models.ResponseLikeComment
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/like/comment/{id} [post]
 func (h *handlerV1) GetLikeOwnersByCommentId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true

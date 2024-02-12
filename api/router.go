@@ -1,11 +1,14 @@
 package api
 
 import (
+	_ "apii_gateway/api/docs"
 	v1 "apii_gateway/api/handlers/v1"
 	"apii_gateway/config"
 	"apii_gateway/pkg/logger"
 	"apii_gateway/services"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Option Struct
@@ -16,6 +19,10 @@ type Option struct {
 }
 
 // New -> constructor
+// @title Welcome to services
+// @version 1.0
+// @description In this swagger documentation you can test all of your microservices
+// @host localhost:5555
 func New(option Option) *gin.Engine {
 	router := gin.New()
 
@@ -33,7 +40,7 @@ func New(option Option) *gin.Engine {
 	//users
 	api.POST("/user/create", handlerV1.CreateUser)
 	api.GET("/user/:id", handlerV1.GetUserById)
-	api.PUT("/user/update/:id", handlerV1.UpdateUser)
+	api.PUT("/user/update", handlerV1.UpdateUser)
 	api.DELETE("/user/delete/:id", handlerV1.DeleteUser)
 	api.GET("/users", handlerV1.GetAllUsers)
 
@@ -55,7 +62,7 @@ func New(option Option) *gin.Engine {
 	api.GET("/like/post/:post_id", handlerV1.GetLikeOwnersByPostId)
 	api.GET("/like/comment/:comment_id", handlerV1.GetLikeOwnersByCommentId)
 
-	//url:=ginSwagger.URL("swagger/doc.json")
-	//router.GET("/swagger/*any, ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+	url := ginSwagger.URL("swagger/doc.json")
+	api.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	return router
 }

@@ -5,10 +5,11 @@ import (
 	pb "apii_gateway/genproto/user_service"
 	"apii_gateway/pkg/logger"
 	"context"
-	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 //rpc Create(User) returns (User);
@@ -18,6 +19,16 @@ import (
 //rpc GetAllUsers(GetAllUsersRequest) returns (AllUsers);
 
 // CreateUser
+// @Summary create user
+// @Tags User
+// @Description Create a new user with the provided details
+// @Accept json
+// @Produce json
+// @Param UserInfo body models.User true "Create user"
+// @Success 201 {object} models.User
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/user/create [post]
 func (h *handlerV1) CreateUser(c *gin.Context) {
 	var (
 		body        models.User
@@ -56,6 +67,16 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 }
 
 // Get User By Id
+// @Summary get user by id
+// @Tags User
+// @Description Get user
+// @Accept json
+// @Produce json
+// @Param id path string true "Id"
+// @Success 201 {object} models.UserWithPostsAndComments
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/user/{id} [get]
 func (h *handlerV1) GetUserById(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -80,6 +101,17 @@ func (h *handlerV1) GetUserById(c *gin.Context) {
 }
 
 // Update User
+
+// @Summary update user
+// @Tags User
+// @Description Update user
+// @Accept json
+// @Produce json
+// @Param UserInfo body models.User true "Update User"
+// @Success 201 {object} models.User
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/user/update [put]
 func (h *handlerV1) UpdateUser(c *gin.Context) {
 	var (
 		body        pb.User
@@ -96,8 +128,6 @@ func (h *handlerV1) UpdateUser(c *gin.Context) {
 		h.log.Error("cannot bind json", logger.Error(err))
 		return
 	}
-
-	body.Id = c.Param("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
@@ -122,13 +152,23 @@ func (h *handlerV1) UpdateUser(c *gin.Context) {
 }
 
 // Delete User
+// @Summary delete user
+// @Tags User
+// @Description Delete user
+// @Accept json
+// @Produce json
+// @Param id path string true "Id"
+// @Success 201 {object} models.User
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/user/delete/{id} [delete]
 func (h *handlerV1) DeleteUser(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
 
 	id := c.Param("id")
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(h.cfg.CtxTimeOut))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
 
 	response, err := h.serviceManager.UserService().DeleteUser(ctx, &pb.GetUserId{
@@ -148,6 +188,15 @@ func (h *handlerV1) DeleteUser(c *gin.Context) {
 }
 
 // Get All Users with Posts and Comments
+// @Summary get all users with posts and comments
+// @Tags User
+// @Description get all users
+// @Accept json
+// @Produce json
+// @Success 201 {object} models.AllUsers
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/users [get]
 func (h *handlerV1) GetAllUsers(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true

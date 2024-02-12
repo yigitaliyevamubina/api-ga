@@ -1,4 +1,648 @@
+definitions:
+  models.AllUsers:
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/models.UserWithPostsAndComments'
+        type: array
+    type: object
+  models.Comment:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      owner_id:
+        type: string
+      post_id:
+        type: string
+    type: object
+  models.CommentLike:
+    properties:
+      comment_id:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.Comments:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+    type: object
+  models.Post:
+    properties:
+      id:
+        type: string
+      image_url:
+        type: string
+      owner_id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.PostLike:
+    properties:
+      id:
+        type: string
+      post_id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.Posts:
+    properties:
+      posts:
+        items:
+          $ref: '#/definitions/models.Post'
+        type: array
+    type: object
+  models.RespPost:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+      id:
+        type: string
+      image_url:
+        type: string
+      owner_id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.ResponseLikeComment:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      likes:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+      owner_id:
+        type: string
+      post_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.ResponseLikePost:
+    properties:
+      id:
+        type: string
+      image_url:
+        type: string
+      likes:
+        items:
+          $ref: '#/definitions/models.User'
+        type: array
+      owner_id:
+        type: string
+      title:
+        type: string
+    type: object
+  models.Status:
+    properties:
+      liked:
+        type: boolean
+    type: object
+  models.User:
+    properties:
+      age:
+        type: integer
+      first_name:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: string
+      last_name:
+        type: string
+    type: object
+  models.UserWithPostsAndComments:
+    properties:
+      age:
+        type: integer
+      first_name:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: string
+      last_name:
+        type: string
+      posts:
+        items:
+          $ref: '#/definitions/models.Post'
+        type: array
+    type: object
+host: localhost:5555
 info:
   contact: {}
-paths: {}
+  description: In this swagger documentation you can test all of your microservices
+  title: Welcome to services
+  version: "1.0"
+paths:
+  /v1/comment/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Comment
+      parameters:
+      - description: Create Comment
+        in: body
+        name: CommentInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.Comment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Comment'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: create comment
+      tags:
+      - Comment
+  /v1/comment/owner/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments by owner id
+      parameters:
+      - description: owne_id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Comments'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get all comments by owner id
+      tags:
+      - Comment
+  /v1/comment/post/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments by post id
+      parameters:
+      - description: post_id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Comments'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get all comments by post id
+      tags:
+      - Comment
+  /v1/like/comment:
+    post:
+      consumes:
+      - application/json
+      description: Like comment
+      parameters:
+      - description: Like comment
+        in: body
+        name: LikeInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentLike'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Status'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: like comment
+      tags:
+      - Like
+  /v1/like/comment/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Like owners by comment id
+      parameters:
+      - description: comment_id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseLikeComment'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: like owners by comment id
+      tags:
+      - Like
+  /v1/like/post:
+    post:
+      consumes:
+      - application/json
+      description: Like post
+      parameters:
+      - description: Like post
+        in: body
+        name: LikeInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostLike'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Status'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: like post
+      tags:
+      - Like
+  /v1/like/post/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Like owners by post id
+      parameters:
+      - description: post_id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ResponseLikePost'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: like owners by post id
+      tags:
+      - Like
+  /v1/post/create:
+    post:
+      consumes:
+      - application/json
+      description: Create Post
+      parameters:
+      - description: Create Post
+        in: body
+        name: PostInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.RespPost'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: create post
+      tags:
+      - Post
+  /v1/post/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Post
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: delete post
+      tags:
+      - Post
+  /v1/post/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Post
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.RespPost'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get post
+      tags:
+      - Post
+  /v1/post/owner/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get Posts by owner id
+      parameters:
+      - description: owner_id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Posts'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get posts by owner id
+      tags:
+      - Post
+  /v1/post/update:
+    put:
+      consumes:
+      - application/json
+      description: Update Post
+      parameters:
+      - description: Create Post
+        in: body
+        name: PostInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.Post'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: update post
+      tags:
+      - Post
+  /v1/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.UserWithPostsAndComments'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get user by id
+      tags:
+      - User
+  /v1/user/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided details
+      parameters:
+      - description: Create user
+        in: body
+        name: UserInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: create user
+      tags:
+      - User
+  /v1/user/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: delete user
+      tags:
+      - User
+  /v1/user/update:
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: Update User
+        in: body
+        name: UserInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: update user
+      tags:
+      - User
+  /v1/users:
+    get:
+      consumes:
+      - application/json
+      description: get all users
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AllUsers'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get all users with posts and comments
+      tags:
+      - User
 swagger: "2.0"

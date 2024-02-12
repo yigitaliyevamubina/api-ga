@@ -18,6 +18,16 @@ import (
 //rpc GetPostsByOwnerId(GetOwnerId) returns (OwnerPosts);
 
 // Create Post
+// @Summary create post
+// @Tags Post
+// @Description Create Post
+// @Accept json
+// @Produce json
+// @Param PostInfo body models.Post true "Create Post"
+// @Success 201 {object} models.RespPost
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/post/create [post]
 func (h *handlerV1) CreatePost(c *gin.Context) {
 	var (
 		body        models.Post
@@ -55,6 +65,16 @@ func (h *handlerV1) CreatePost(c *gin.Context) {
 }
 
 // Update User
+// @Summary update post
+// @Tags Post
+// @Description Update Post
+// @Accept json
+// @Produce json
+// @Param PostInfo body models.Post true "Create Post"
+// @Success 201 {object} models.Post
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/post/update [put]
 func (h *handlerV1) UpdatePost(c *gin.Context) {
 	var (
 		body        pbp.ReqPost
@@ -96,6 +116,16 @@ func (h *handlerV1) UpdatePost(c *gin.Context) {
 }
 
 // Delete User
+// @Summary delete post
+// @Tags Post
+// @Description Delete Post
+// @Accept json
+// @Produce json
+// @Param id path string true "id"
+// @Success 201 {object} models.Post
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/post/delete/{id} [delete]
 func (h *handlerV1) DeletePost(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -122,6 +152,16 @@ func (h *handlerV1) DeletePost(c *gin.Context) {
 }
 
 // Get Post By Id
+// @Summary get post
+// @Tags Post
+// @Description Get Post
+// @Accept json
+// @Produce json
+// @Param id path string true "id"
+// @Success 201 {object} models.RespPost
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/post/get/{id} [get]
 func (h *handlerV1) GetPostById(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -146,6 +186,16 @@ func (h *handlerV1) GetPostById(c *gin.Context) {
 }
 
 // Get All Posts By Owner Id
+// @Summary get posts by owner id
+// @Tags Post
+// @Description Get Posts by owner id
+// @Accept json
+// @Produce json
+// @Param id path string true "owner_id"
+// @Success 201 {object} models.Posts
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+// @Router /v1/post/owner/{id} [get]
 func (h *handlerV1) GetPostsByOwnerId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
