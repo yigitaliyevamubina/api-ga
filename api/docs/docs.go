@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/v1/comment/create": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create Comment",
                 "consumes": [
                     "application/json"
@@ -63,6 +68,11 @@ const docTemplate = `{
         },
         "/v1/comment/owner/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get all comments by owner id",
                 "consumes": [
                     "application/json"
@@ -77,7 +87,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "owne_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -107,6 +117,11 @@ const docTemplate = `{
         },
         "/v1/comment/post/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get all comments by post id",
                 "consumes": [
                     "application/json"
@@ -121,7 +136,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "post_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -151,6 +166,11 @@ const docTemplate = `{
         },
         "/v1/like/comment": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Like comment",
                 "consumes": [
                     "application/json"
@@ -196,7 +216,12 @@ const docTemplate = `{
             }
         },
         "/v1/like/comment/{id}": {
-            "post": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Like owners by comment id",
                 "consumes": [
                     "application/json"
@@ -211,7 +236,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "comment_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -241,6 +266,11 @@ const docTemplate = `{
         },
         "/v1/like/post": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Like post",
                 "consumes": [
                     "application/json"
@@ -286,7 +316,12 @@ const docTemplate = `{
             }
         },
         "/v1/like/post/{id}": {
-            "post": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Like owners by post id",
                 "consumes": [
                     "application/json"
@@ -301,7 +336,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "post_id",
+                        "description": "id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -331,6 +366,11 @@ const docTemplate = `{
         },
         "/v1/post/create": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create Post",
                 "consumes": [
                     "application/json"
@@ -377,6 +417,11 @@ const docTemplate = `{
         },
         "/v1/post/delete/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete Post",
                 "consumes": [
                     "application/json"
@@ -421,6 +466,11 @@ const docTemplate = `{
         },
         "/v1/post/get/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get Post",
                 "consumes": [
                     "application/json"
@@ -465,6 +515,11 @@ const docTemplate = `{
         },
         "/v1/post/owner/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get Posts by owner id",
                 "consumes": [
                     "application/json"
@@ -509,6 +564,11 @@ const docTemplate = `{
         },
         "/v1/post/update": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update Post",
                 "consumes": [
                     "application/json"
@@ -555,6 +615,11 @@ const docTemplate = `{
         },
         "/v1/user/create": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Create a new user with the provided details",
                 "consumes": [
                     "application/json"
@@ -601,6 +666,11 @@ const docTemplate = `{
         },
         "/v1/user/delete/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Delete user",
                 "consumes": [
                     "application/json"
@@ -643,8 +713,99 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/user/login": {
+            "post": {
+                "description": "Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "login user",
+                "parameters": [
+                    {
+                        "description": "Login",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user/register": {
+            "post": {
+                "description": "Register a new user with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "register user",
+                "parameters": [
+                    {
+                        "description": "Register user",
+                        "name": "UserInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.RegisterRespUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/update": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Update user",
                 "consumes": [
                     "application/json"
@@ -689,8 +850,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/user/verify/{email}/{code}": {
+            "get": {
+                "description": "Verify a user with code sent to their email",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "verify user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.VerifyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/user/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get user",
                 "consumes": [
                     "application/json"
@@ -735,6 +943,11 @@ const docTemplate = `{
         },
         "/v1/users": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get all users",
                 "consumes": [
                     "application/json"
@@ -804,9 +1017,6 @@ const docTemplate = `{
                 "comment_id": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "user_id": {
                     "type": "string"
                 }
@@ -820,6 +1030,34 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Comment"
                     }
+                }
+            }
+        },
+        "models.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
                 }
             }
         },
@@ -843,9 +1081,6 @@ const docTemplate = `{
         "models.PostLike": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
-                },
                 "post_id": {
                     "type": "string"
                 },
@@ -862,6 +1097,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.Post"
                     }
+                }
+            }
+        },
+        "models.RegisterRespUser": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
                 }
             }
         },
@@ -954,6 +1197,9 @@ const docTemplate = `{
                 "age": {
                     "type": "integer"
                 },
+                "email": {
+                    "type": "string"
+                },
                 "first_name": {
                     "type": "string"
                 },
@@ -964,6 +1210,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "last_name": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
@@ -974,6 +1223,9 @@ const docTemplate = `{
                 "age": {
                     "type": "integer"
                 },
+                "email": {
+                    "type": "string"
+                },
                 "first_name": {
                     "type": "string"
                 },
@@ -986,6 +1238,9 @@ const docTemplate = `{
                 "last_name": {
                     "type": "string"
                 },
+                "password": {
+                    "type": "string"
+                },
                 "posts": {
                     "type": "array",
                     "items": {
@@ -993,6 +1248,21 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "models.VerifyResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

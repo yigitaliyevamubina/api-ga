@@ -1,0 +1,703 @@
+openapi: 3.0.3
+info:
+  title: Microservice - open api 3.0.3 
+  description: |- 
+    This is homework. Yaml format is written by hand. Mubina's
+  termsOfService: https://erp.student.najottalim.uz/
+  contact:
+    email: mubinayigitaliyeva@gmail.com
+  version: 1.0.11
+externalDocs:
+  description: Najot Ta'lim erp system 
+  url: https://erp.student.najottalim.uz/
+tags:
+  - name: User 
+    description: User service
+  - name: Post
+    description: Post service 
+  - name: Comment
+    description: Comment service 
+  - name: Like 
+    description: Like service 
+paths:
+  /v1/user/create:
+    post:
+      tags:
+        - User 
+      summary: Create an account
+      description: Create a user
+      operationId: createUser
+      requestBody:
+        description: Create a new account
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/models.User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.User'
+        required: true
+      responses:
+        '201': 
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.User'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/user/update:
+    put:
+      tags:
+        - User
+      summary: Update an account
+      description: Update an account
+      operationId: updateUser
+      requestBody:
+        description: Update a user
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/models.User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.User'
+        required: true
+      responses:
+        '201': 
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.User'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/user/{user_id}:
+    get:
+      tags:
+      - User
+      summary: Get user by id
+      description: Get user by id
+      operationId: getUser
+      parameters:
+        - name: user_id
+          in: path
+          description: Id 
+          required: true
+          schema:
+            type: string
+      responses:
+        '201': 
+          description: status found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.User'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/user/delete/{user_id}:
+    delete:
+      tags:
+      - User
+      summary: Delete an account
+      description: Delete a user
+      operationId: deleteUser
+      parameters:
+        - name: user_id
+          in: path
+          description: Id 
+          required: true
+          schema:
+            type: string
+      responses:
+        '201': 
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.User'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.User'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/users:
+    get:
+      tags:
+      - User
+      summary: Get all users
+      description: Get all users with posts
+      operationId: getAllUsers
+      responses:
+        '201': 
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.AllUsers'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.AllUsers'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/post/create:
+    post:
+      tags:
+      - Post
+      summary: Create a post
+      description: Create a post 
+      operationId: createPost
+      requestBody:
+        description: create post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/models.Post'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.Post'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.Post'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.RespPost'    
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+  /v1/post/get/{post_id}:
+    get:
+      tags:
+      - Post
+      summary: Get post by id
+      description: Get post by id
+      operationId: getPostById
+      parameters:
+      - name: post_id
+        in: path
+        description: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.RespPost'    
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+  /v1/post/update:
+    put:
+      tags:
+      - Post
+      summary: Update post
+      description: Update post
+      operationId: updatePost
+      requestBody:
+        description: Update post
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/models.RespPost'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.RespPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.RespPost'
+        required: true
+      responses:
+        '201':
+          description: Updated
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.RespPost'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.RespPost'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/post/delete/{post_id}:
+    delete:
+      tags:
+      - Post
+      summary: Delete a post
+      description: Delete a post
+      operationId: deletePost
+      parameters:
+        - name: post_id
+          in: path
+          description: Id 
+          required: true
+          schema:
+            type: string
+      responses:
+        '201': 
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.RespPost'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.RespPost'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/post/owner/{owner_id}:
+    get:
+      tags:
+      - Post
+      summary: Get posts by owner id
+      description: get posts by owner id
+      operationId: getPosts
+      parameters:
+        - name: owner_id
+          in: path
+          description: Id
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.Posts'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.Posts'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/comment/create:
+    post:
+      tags:
+      - Comment
+      summary: Create a comment
+      description: Create a new comment
+      operationId: createComment
+      requestBody:
+        description: Comment info
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/models.Comment'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.Comment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.Post'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.Comment'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.Comment'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/comment/owner/{owner_id}:
+    get:
+      tags: 
+      - Comment
+      summary: Get comments by owner id
+      description: Get all comments by owner id
+      operationId: getCommentsByOwnerId
+      parameters:
+        - name: owner_id
+          in: path
+          description: owner id
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.Comments'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.Comments'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/comment/post/{post_id}:
+    get:
+      tags:
+      - Comment
+      summary: Get comments by post id
+      description: Get all comments by post id
+      operationId: getCommentsByPostId
+      parameters:
+        - name: post_id
+          in: path
+          description: post id
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.Comments'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.Comments'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/like/comment:
+    post:
+      tags:
+      - Like
+      summary: Like a comment
+      description: Like a comment
+      operationId: likeComment
+      requestBody:
+        description: Comment like
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/models.CommentLike'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.CommentLike'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.CommentLike'
+      responses:
+        '201':
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.Status'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.Status'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/like/post:
+    post:
+      tags:
+      - Like
+      summary: Like a post
+      description: Like a post
+      operationId: likePost
+      requestBody:
+        description: Post like
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/models.PostLike'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/models.PostLike'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/models.PostLike'
+      responses:
+        '201':
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.Status'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.Status'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/like/comment/{comment_id}:
+    get:
+      tags:
+      - Like
+      summary: Get like owners
+      description: Get like owners by comment id
+      operationId: likeOwnersComment
+      parameters:
+        - name: comment_id
+          in: path
+          description: comment id
+          required: true
+          schema: 
+            type: string
+      responses:
+        '201':
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.ResponseLikeComment'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.ResponseLikeComment'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+  /v1/like/post/{post_id}:
+    post:
+      tags:
+      - Like
+      summary: Get like owners
+      description: Get like owners by post id
+      operationId: likeOwnersPost
+      parameters:
+        - name: post_id
+          in: path
+          description: post id
+          required: true
+          schema: 
+            type: string
+      responses:
+        '201':
+          description: status OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.ResponseLikePost'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/models.ResponseLikePost'
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    models.Post:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        image_url:
+          type: string
+          example: 'image_url'
+        title:
+          type: string 
+          example: 'title'
+        owner_id: 
+          type: string 
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c190'
+    models.UserWithPostsAndComments:
+      type: object 
+      properties:
+        id: 
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        age:
+          type: integer
+          example: 20
+        first_name:
+          type: string
+          example: 'John'
+        last_name:
+          type: string 
+          example: 'Smith'
+        gender:
+          type: integer
+          example: 0
+        posts: 
+          type: array 
+          items: 
+            $ref: '#/components/schemas/models.Post'
+    models.AllUsers:
+      type: object
+      properties: 
+        users: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/models.UserWithPostsAndComments'
+    models.Comment:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c190'
+        content:
+          type: string
+          example: 'Wow, amazing!'
+        post_id:
+          type: string
+          example: '23m022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        owner_id:
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+    models.CommentLike: 
+      type: object 
+      properties:
+        id: 
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        comment_id:
+          type: string
+          example: '79b022f8-64d0-4ec7-d4g5-bf68ad80c150'
+        user_id:
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c130'
+    models.Comments:
+      type: object 
+      properties:
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/models.Comment'
+    models.PostLike: 
+      type: object 
+      properties:
+        id: 
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        post_id:
+          type: string
+          example: '79b022f8-64d0-4ec7-d4g5-bf68ad80c150'
+        user_id:
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c130'
+    models.Posts:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/models.Post'
+    models.RespPost:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        image_url:
+          type: string
+          example: 'image_url'
+        title:
+          type: string 
+          example: 'title'
+        owner_id: 
+          type: string 
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c190'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/models.Comment'
+    models.User:
+      type: object
+      properties:
+        id:
+          type: string 
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        first_name:
+          type: string
+          example: 'John'
+        last_name:
+          type: string
+          example: 'Smith'
+        age:
+          type: integer
+          example: 20
+        gender:
+          type: integer
+          example: 0
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/models.Post'
+    models.ResponseLikeComment:
+      type: object
+      properties:
+        id:
+          type: string 
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        content:
+          type: string
+          example: 'Woow!'
+        post_id:
+          type: string 
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c100'
+        owner_id:
+          type: string
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad23c150'
+        likes:
+          type: array
+          items: 
+            $ref: '#/components/schemas/models.User'
+    models.ResponseLikePost:
+      type: object
+      properties:
+        id:
+          type: string 
+          example: '79b022f8-64d0-4ec7-b2d5-bf68ad80c150'
+        title:
+          type: string
+          example: 'title'
+        image_url:
+          type: string
+          example: 'image url example'
+        likes:
+          type: array
+          items: 
+            $ref: '#/components/schemas/models.User'
+    models.Status:
+      type: object
+      properties:
+        liked:
+          type: boolean

@@ -21,8 +21,6 @@ definitions:
     properties:
       comment_id:
         type: string
-      id:
-        type: string
       user_id:
         type: string
     type: object
@@ -32,6 +30,24 @@ definitions:
         items:
           $ref: '#/definitions/models.Comment'
         type: array
+    type: object
+  models.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
     type: object
   models.Post:
     properties:
@@ -46,8 +62,6 @@ definitions:
     type: object
   models.PostLike:
     properties:
-      id:
-        type: string
       post_id:
         type: string
       user_id:
@@ -59,6 +73,11 @@ definitions:
         items:
           $ref: '#/definitions/models.Post'
         type: array
+    type: object
+  models.RegisterRespUser:
+    properties:
+      message:
+        type: string
     type: object
   models.RespPost:
     properties:
@@ -118,6 +137,8 @@ definitions:
     properties:
       age:
         type: integer
+      email:
+        type: string
       first_name:
         type: string
       gender:
@@ -125,12 +146,16 @@ definitions:
       id:
         type: string
       last_name:
+        type: string
+      password:
         type: string
     type: object
   models.UserWithPostsAndComments:
     properties:
       age:
         type: integer
+      email:
+        type: string
       first_name:
         type: string
       gender:
@@ -139,10 +164,17 @@ definitions:
         type: string
       last_name:
         type: string
+      password:
+        type: string
       posts:
         items:
           $ref: '#/definitions/models.Post'
         type: array
+    type: object
+  models.VerifyResponse:
+    properties:
+      message:
+        type: string
     type: object
 host: localhost:5555
 info:
@@ -178,6 +210,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: create comment
       tags:
       - Comment
@@ -187,7 +221,7 @@ paths:
       - application/json
       description: Get all comments by owner id
       parameters:
-      - description: owne_id
+      - description: id
         in: path
         name: id
         required: true
@@ -207,6 +241,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: get all comments by owner id
       tags:
       - Comment
@@ -216,7 +252,7 @@ paths:
       - application/json
       description: Get all comments by post id
       parameters:
-      - description: post_id
+      - description: id
         in: path
         name: id
         required: true
@@ -236,6 +272,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: get all comments by post id
       tags:
       - Comment
@@ -266,16 +304,18 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: like comment
       tags:
       - Like
   /v1/like/comment/{id}:
-    post:
+    get:
       consumes:
       - application/json
       description: Like owners by comment id
       parameters:
-      - description: comment_id
+      - description: id
         in: path
         name: id
         required: true
@@ -295,6 +335,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: like owners by comment id
       tags:
       - Like
@@ -325,16 +367,18 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: like post
       tags:
       - Like
   /v1/like/post/{id}:
-    post:
+    get:
       consumes:
       - application/json
       description: Like owners by post id
       parameters:
-      - description: post_id
+      - description: id
         in: path
         name: id
         required: true
@@ -354,6 +398,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: like owners by post id
       tags:
       - Like
@@ -384,6 +430,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: create post
       tags:
       - Post
@@ -413,6 +461,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: delete post
       tags:
       - Post
@@ -442,6 +492,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: get post
       tags:
       - Post
@@ -471,6 +523,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: get posts by owner id
       tags:
       - Post
@@ -501,6 +555,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: update post
       tags:
       - Post
@@ -530,6 +586,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: get user by id
       tags:
       - User
@@ -560,6 +618,8 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: create user
       tags:
       - User
@@ -589,7 +649,65 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: delete user
+      tags:
+      - User
+  /v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Login
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: login user
+      tags:
+      - User
+  /v1/user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with the provided details
+      parameters:
+      - description: Register user
+        in: body
+        name: UserInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.RegisterRespUser'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: register user
       tags:
       - User
   /v1/user/update:
@@ -619,7 +737,37 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: update user
+      tags:
+      - User
+  /v1/user/verify/{email}/{code}:
+    get:
+      consumes:
+      - application/json
+      description: Verify a user with code sent to their email
+      parameters:
+      - description: email
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: code
+        in: path
+        name: code
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.VerifyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: verify user
       tags:
       - User
   /v1/users:
@@ -642,7 +790,14 @@ paths:
           description: Internal Server Error
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: get all users with posts and comments
       tags:
       - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

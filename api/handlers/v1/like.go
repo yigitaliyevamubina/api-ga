@@ -5,6 +5,7 @@ import (
 	pbl "apii_gateway/genproto/like_service"
 	"apii_gateway/pkg/logger"
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
@@ -16,6 +17,8 @@ import (
 //rpc GetLikeOwnersByPostId(GetPostId) returns (Post);
 //rpc GetLikeOwnersByCommentId(GetCommentId) returns (Comment);
 
+// @Router /v1/like/post [post]
+// @Security ApiKeyAuth
 // @Summary like post
 // @Tags Like
 // @Description Like post
@@ -61,6 +64,8 @@ func (h *handlerV1) LikePost(c *gin.Context) {
 	c.JSON(http.StatusCreated, response)
 }
 
+// @Router /v1/like/comment [post]
+// @Security ApiKeyAuth
 // @Summary like comment
 // @Tags Like
 // @Description Like comment
@@ -70,7 +75,6 @@ func (h *handlerV1) LikePost(c *gin.Context) {
 // @Success 201 {object} models.Status
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
-// @Router /v1/like/comment [post]
 func (h *handlerV1) LikeComment(c *gin.Context) {
 	var (
 		body        models.CommentLike
@@ -110,21 +114,22 @@ func (h *handlerV1) LikeComment(c *gin.Context) {
 
 }
 
+// @Router /v1/like/post/{id} [get]
+// @Security ApiKeyAuth
 // @Summary like owners by post id
 // @Tags Like
 // @Description Like owners by post id
 // @Accept json
 // @Produce json
-// @Param id path string true "post_id"
+// @Param id path string true "id"
 // @Success 201 {object} models.ResponseLikePost
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
-// @Router /v1/like/post/{id} [post]
 func (h *handlerV1) GetLikeOwnersByPostId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
 
-	postId := c.Param("post_id")
+	postId := c.Param("id")
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
@@ -144,16 +149,17 @@ func (h *handlerV1) GetLikeOwnersByPostId(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// @Router /v1/like/comment/{id} [get]
+// @Security ApiKeyAuth
 // @Summary like owners by comment id
 // @Tags Like
 // @Description Like owners by comment id
 // @Accept json
 // @Produce json
-// @Param id path string true "comment_id"
+// @Param id path string true "id"
 // @Success 201 {object} models.ResponseLikeComment
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
-// @Router /v1/like/comment/{id} [post]
 func (h *handlerV1) GetLikeOwnersByCommentId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -161,11 +167,13 @@ func (h *handlerV1) GetLikeOwnersByCommentId(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
 
-	commentId := c.Param("comment_id")
+	commentId := c.Param("id")
 
 	response, err := h.serviceManager.LikeService().GetLikeOwnersByCommentId(ctx, &pbl.GetCommentId{
 		CommentId: commentId,
 	})
+
+	fmt.Println(response)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),

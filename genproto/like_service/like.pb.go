@@ -52,7 +52,7 @@ func (Gender) EnumDescriptor() ([]byte, []int) {
 }
 
 type Status struct {
-	Liked                bool     `protobuf:"varint,1,opt,name=liked,proto3" json:"liked,omitempty"`
+	Liked                bool     `protobuf:"varint,1,opt,name=liked,proto3" json:"liked"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -99,8 +99,8 @@ func (m *Status) GetLiked() bool {
 }
 
 type PostLike struct {
-	PostId               string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	OwnerId              string   `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	PostId               string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id"`
+	OwnerId              string   `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -154,8 +154,8 @@ func (m *PostLike) GetOwnerId() string {
 }
 
 type CommentLike struct {
-	CommentId            string   `protobuf:"bytes,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
-	OwnerId              string   `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	CommentId            string   `protobuf:"bytes,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id"`
+	OwnerId              string   `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -209,11 +209,11 @@ func (m *CommentLike) GetOwnerId() string {
 }
 
 type Post struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title                string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	ImageUrl             string   `protobuf:"bytes,3,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
-	OwnerId              string   `protobuf:"bytes,4,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	Likes                []*Owner `protobuf:"bytes,5,rep,name=likes,proto3" json:"likes,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Title                string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title"`
+	ImageUrl             string   `protobuf:"bytes,3,opt,name=image_url,json=imageUrl,proto3" json:"image_url"`
+	OwnerId              string   `protobuf:"bytes,4,opt,name=owner_id,json=ownerId,proto3" json:"owner_id"`
+	Likes                []*Owner `protobuf:"bytes,5,rep,name=likes,proto3" json:"likes"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -288,14 +288,14 @@ func (m *Post) GetLikes() []*Owner {
 }
 
 type Comment struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Content              string   `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
-	OwnerId              string   `protobuf:"bytes,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
-	PostId               string   `protobuf:"bytes,4,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	CreatedAt            string   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt            string   `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	DeletedAt            string   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
-	Likes                []*Owner `protobuf:"bytes,8,rep,name=likes,proto3" json:"likes,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Content              string   `protobuf:"bytes,2,opt,name=content,proto3" json:"content"`
+	OwnerId              string   `protobuf:"bytes,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id"`
+	PostId               string   `protobuf:"bytes,4,opt,name=post_id,json=postId,proto3" json:"post_id"`
+	CreatedAt            string   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at"`
+	UpdatedAt            string   `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
+	DeletedAt            string   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at"`
+	Likes                []*Owner `protobuf:"bytes,8,rep,name=likes,proto3" json:"likes"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -391,11 +391,11 @@ func (m *Comment) GetLikes() []*Owner {
 }
 
 type Owner struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	FirstName            string   `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName             string   `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
-	Age                  int64    `protobuf:"varint,4,opt,name=age,proto3" json:"age,omitempty"`
-	Gender               Gender   `protobuf:"varint,5,opt,name=gender,proto3,enum=like.Gender" json:"gender,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	FirstName            string   `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name"`
+	LastName             string   `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name"`
+	Age                  int64    `protobuf:"varint,4,opt,name=age,proto3" json:"age"`
+	Gender               Gender   `protobuf:"varint,5,opt,name=gender,proto3,enum=like.Gender" json:"gender"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -470,7 +470,7 @@ func (m *Owner) GetGender() Gender {
 }
 
 type GetOwnerId struct {
-	OwnerId              string   `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	OwnerId              string   `protobuf:"bytes,1,opt,name=owner_id,json=ownerId,proto3" json:"owner_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -517,7 +517,7 @@ func (m *GetOwnerId) GetOwnerId() string {
 }
 
 type GetPostId struct {
-	PostId               string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	PostId               string   `protobuf:"bytes,1,opt,name=post_id,json=postId,proto3" json:"post_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -564,7 +564,7 @@ func (m *GetPostId) GetPostId() string {
 }
 
 type GetCommentId struct {
-	CommentId            string   `protobuf:"bytes,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id,omitempty"`
+	CommentId            string   `protobuf:"bytes,1,opt,name=comment_id,json=commentId,proto3" json:"comment_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

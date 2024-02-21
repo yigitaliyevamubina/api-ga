@@ -17,6 +17,8 @@ import (
 //rpc GetAllCommentsByOwnerId(GetOwnerID) returns (AllComments);
 
 // Create Comment
+// @Router /v1/comment/create [post]
+// @Security ApiKeyAuth
 // @Summary create comment
 // @Tags Comment
 // @Description Create Comment
@@ -26,7 +28,6 @@ import (
 // @Success 201 {object} models.Comment
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
-// @Router /v1/comment/create [post]
 func (h *handlerV1) CreateComment(c *gin.Context) {
 	var (
 		body        models.Comment
@@ -65,16 +66,17 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 }
 
 // Get All Comments By Post Id
+// @Router /v1/comment/post/{id} [get]
+// @Security ApiKeyAuth
 // @Summary get all comments by post id
 // @Tags Comment
 // @Description Get all comments by post id
 // @Accept json
 // @Produce json
-// @Param id path string true "post_id"
+// @Param id path string true "id"
 // @Success 201 {object} models.Comments
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
-// @Router /v1/comment/post/{id} [get]
 func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
@@ -86,8 +88,6 @@ func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 	response, err := h.serviceManager.CommentService().GetAllCommentsByPostId(ctx, &pbc.GetPostID{
 		PostId: postId,
 	})
-
-	fmt.Println(response, "commentnttnntntn")
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -101,16 +101,17 @@ func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 }
 
 // Get All Comments By Owner Id
+// @Router /v1/comment/owner/{id} [get]
+// @Security ApiKeyAuth
 // @Summary get all comments by owner id
 // @Tags Comment
 // @Description Get all comments by owner id
 // @Accept json
 // @Produce json
-// @Param id path string true "owne_id"
+// @Param id path string true "id"
 // @Success 201 {object} models.Comments
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
-// @Router /v1/comment/owner/{id} [get]
 func (h *handlerV1) GetAllCommentsByOwnerId(c *gin.Context) {
 	var jspbMarshal protojson.MarshalOptions
 	jspbMarshal.UseProtoNames = true
