@@ -11,10 +11,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/spf13/cast"
 
 	"github.com/gomodule/redigo/redis"
 
@@ -375,6 +377,8 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
 
+	body.Id = uuid.New().String()
+
 	response, err := h.serviceManager.UserService().Create(ctx, &pb.User{
 		Id:        body.Id,
 		FirstName: body.FirstName,
@@ -544,4 +548,75 @@ func (h *handlerV1) GetAllUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// Update Access token
+// @Router /v1/user/refresh [post]
+// @Security ApiKeyAuth
+// @Summary update access token
+// @Tags User
+// @Description get access token updated
+// @Accept json
+// @Produce json
+// @Param RefreshToken body models.AccessTokenUpdateReq true "Refresh token"
+// @Success 201 {object} models.AccessTokenUpdateResp
+// @Failure 400 string Error models.Error
+// @Failure 500 string Error models.Error
+func (h *handlerV1) UpdateRefreshToken(c *gin.Context) {
+	var (
+		jspbMarshal protojson.MarshalOptions
+		body        models.AccessTokenUpdateReq
+	)
+	jspbMarshal.UseProtoNames = true
+
+	err := c.ShouldBindJSON(&body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	claims, err := tokens.ExtractClaim(body.RefreshToken, []byte(h.cfg.SignInKey))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "refresh token is invalid",
+		})
+		return
+	}
+
+	h.jwtHandler = tokens.JWTHandler{
+		Sub:       cast.ToString(claims["sub"]),
+		Role:      cast.ToString(claims["role"]),
+		SignInKey: h.cfg.SignInKey,
+		Log:       h.log,
+		Timeout:   h.cfg.AccessTokenTimeout,
+	}
+
+	access, refresh, err := h.jwtHandler.GenerateAuthJWT()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
+	defer cancel()
+
+	status, err := h.serviceManager.UserService().UpdateRefreshToken(ctx, &pb.RefreshTokenReq{UserId: body.UserId, RefreshToken: refresh})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	resp := models.AccessTokenUpdateResp{
+		Status:      status.Status,
+		UserID:      body.UserId,
+		AccessToken: access,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

@@ -1,4 +1,20 @@
 definitions:
+  models.AccessTokenUpdateReq:
+    properties:
+      refresh_token:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.AccessTokenUpdateResp:
+    properties:
+      access_token:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
   models.AllUsers:
     properties:
       users:
@@ -678,6 +694,38 @@ paths:
           schema:
             type: string
       summary: login user
+      tags:
+      - User
+  /v1/user/refresh:
+    post:
+      consumes:
+      - application/json
+      description: get access token updated
+      parameters:
+      - description: Refresh token
+        in: body
+        name: RefreshToken
+        required: true
+        schema:
+          $ref: '#/definitions/models.AccessTokenUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AccessTokenUpdateResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: update access token
       tags:
       - User
   /v1/user/register:

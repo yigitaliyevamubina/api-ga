@@ -103,3 +103,14 @@ type LoginResponse struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 }
+
+type AccessTokenUpdateReq struct {
+	UserId       string `json:"user_id"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+type AccessTokenUpdateResp struct {
+	Status      string `json:"status"`
+	UserID      string `json:"user_id"`
+	AccessToken string `json:"access_token"`
+}

@@ -6,10 +6,12 @@ import (
 	"apii_gateway/pkg/logger"
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 //rpc CreateComment(Comment) returns (Comment);
@@ -44,6 +46,8 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 		})
 		h.log.Error("cannot bind json", logger.Error(err))
 	}
+
+	body.Id = uuid.New().String()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()

@@ -4,6 +4,7 @@ import (
 	_ "apii_gateway/api/docs"
 	v1 "apii_gateway/api/handlers/v1"
 	"apii_gateway/api/handlers/v1/tokens"
+	"apii_gateway/api/middleware"
 	"apii_gateway/config"
 	"apii_gateway/pkg/logger"
 	"apii_gateway/services"
@@ -51,6 +52,7 @@ func New(option Option) *gin.Engine {
 
 	api := router.Group("/v1")
 
+	api.Use(middleware.Auth)
 	//users
 	api.POST("/user/create", handlerV1.CreateUser)
 	api.POST("/user/register", handlerV1.Register)

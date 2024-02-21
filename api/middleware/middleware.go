@@ -10,7 +10,9 @@ import (
 
 
 func Auth(ctx *gin.Context) {
-	if ctx.Request.URL.Path == "/v1/user/login" || ctx.Request.URL.Path == "/v1/user/register" {
+	if ctx.Request.URL.Path == "/v1/user/register" || ctx.Request.URL.Path == "/v1/user/login" || 
+				ctx.Request.URL.Path == "/v1/swagger/swagger/doc.json" || ctx.Request.URL.Path == "/v1/swagger/index.html" || 
+				ctx.Request.URL.Path == "/v1/swagger/swagger-ui.css" || ctx.Request.URL.Path == "/v1/swagger/swagger-ui-bundle.js" || ctx.Request.URL.Path == "/v1/swagger/swagger-ui-standalone-preset.js" {
 		ctx.Next()
 		return
 	}
@@ -32,9 +34,6 @@ func Auth(ctx *gin.Context) {
 		})
 		return
 	}
-
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "authorized"},)
 	ctx.Next()
 }
 

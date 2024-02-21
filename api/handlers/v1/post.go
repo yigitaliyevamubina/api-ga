@@ -5,10 +5,12 @@ import (
 	pbp "apii_gateway/genproto/post_service"
 	"apii_gateway/pkg/logger"
 	"context"
-	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/encoding/protojson"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 //rpc CreatePost(ReqPost) returns (RespPost);
@@ -44,6 +46,8 @@ func (h *handlerV1) CreatePost(c *gin.Context) {
 		h.log.Error("cannot bind json", logger.Error(err))
 		return
 	}
+
+	body.Id = uuid.New().String()
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
