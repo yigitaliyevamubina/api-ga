@@ -3,8 +3,6 @@ definitions:
     properties:
       refresh_token:
         type: string
-      user_id:
-        type: string
     type: object
   models.AccessTokenUpdateResp:
     properties:

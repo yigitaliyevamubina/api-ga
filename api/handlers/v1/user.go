@@ -16,7 +16,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/spf13/cast"
 
 	"github.com/gomodule/redigo/redis"
 
@@ -577,17 +576,14 @@ func (h *handlerV1) UpdateRefreshToken(c *gin.Context) {
 		return
 	}
 
-	claims, err := tokens.ExtractClaim(body.RefreshToken, []byte(h.cfg.SignInKey))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "refresh token is invalid",
-		})
-		return
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
+	defer cancel()
+
+	userId, err := h.serviceManager.UserService().GetUserIdByRefreshToken(ctx, &pb.RefreshReq{RefreshToken: body.RefreshToken})
 
 	h.jwtHandler = tokens.JWTHandler{
-		Sub:       cast.ToString(claims["sub"]),
-		Role:      cast.ToString(claims["role"]),
+		Sub:       userId.UserId,
+		Role:      "user",
 		SignInKey: h.cfg.SignInKey,
 		Log:       h.log,
 		Timeout:   h.cfg.AccessTokenTimeout,
@@ -601,10 +597,7 @@ func (h *handlerV1) UpdateRefreshToken(c *gin.Context) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
-	defer cancel()
-
-	status, err := h.serviceManager.UserService().UpdateRefreshToken(ctx, &pb.RefreshTokenReq{UserId: body.UserId, RefreshToken: refresh})
+	status, err := h.serviceManager.UserService().UpdateRefreshToken(ctx, &pb.RefreshTokenReq{UserId: userId.UserId, RefreshToken: refresh})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -614,7 +607,7 @@ func (h *handlerV1) UpdateRefreshToken(c *gin.Context) {
 
 	resp := models.AccessTokenUpdateResp{
 		Status:      status.Status,
-		UserID:      body.UserId,
+		UserID:      userId.UserId,
 		AccessToken: access,
 	}
 
