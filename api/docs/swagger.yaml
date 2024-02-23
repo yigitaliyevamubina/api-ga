@@ -225,7 +225,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: create comment
       tags:
       - Comment
@@ -256,7 +256,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: get all comments by owner id
       tags:
       - Comment
@@ -287,7 +287,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: get all comments by post id
       tags:
       - Comment
@@ -319,7 +319,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: like comment
       tags:
       - Like
@@ -350,7 +350,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: like owners by comment id
       tags:
       - Like
@@ -382,7 +382,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: like post
       tags:
       - Like
@@ -413,7 +413,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: like owners by post id
       tags:
       - Like
@@ -445,7 +445,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: create post
       tags:
       - Post
@@ -476,7 +476,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: delete post
       tags:
       - Post
@@ -507,7 +507,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: get post
       tags:
       - Post
@@ -538,7 +538,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: get posts by owner id
       tags:
       - Post
@@ -570,7 +570,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: update post
       tags:
       - Post
@@ -601,7 +601,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: get user by id
       tags:
       - User
@@ -633,7 +633,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: create user
       tags:
       - User
@@ -664,7 +664,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: delete user
       tags:
       - User
@@ -722,7 +722,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: update access token
       tags:
       - User
@@ -784,7 +784,7 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: update user
       tags:
       - User
@@ -837,12 +837,12 @@ paths:
           schema:
             type: string
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: get all users with posts and comments
       tags:
       - User
 securityDefinitions:
-  ApiKeyAuth:
+  BearerAuth:
     in: header
     name: Authorization
     type: apiKey

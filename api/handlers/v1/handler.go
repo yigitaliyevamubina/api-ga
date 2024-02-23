@@ -6,6 +6,8 @@ import (
 	"apii_gateway/pkg/logger"
 	"apii_gateway/services"
 	"apii_gateway/storage/repo"
+
+	"github.com/casbin/casbin/v2"
 )
 
 type handlerV1 struct {
@@ -14,6 +16,7 @@ type handlerV1 struct {
 	serviceManager  services.IServiceManager
 	cfg             config.Config
 	jwtHandler      t.JWTHandler
+	casbinEnforcer *casbin.Enforcer
 }
 
 type HandlerV1Config struct {
@@ -22,6 +25,7 @@ type HandlerV1Config struct {
 	ServiceManager  services.IServiceManager
 	Cfg             config.Config
 	JWTHandler      t.JWTHandler
+	CasbinEnforcer *casbin.Enforcer
 }
 
 func New(c *HandlerV1Config) *handlerV1 {
@@ -31,5 +35,6 @@ func New(c *HandlerV1Config) *handlerV1 {
 		serviceManager:  c.ServiceManager,
 		cfg:             c.Cfg,
 		jwtHandler:      c.JWTHandler,
+		casbinEnforcer: c.CasbinEnforcer,
 	}
 }

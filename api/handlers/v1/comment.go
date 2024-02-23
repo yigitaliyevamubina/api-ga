@@ -20,7 +20,7 @@ import (
 
 // Create Comment
 // @Router /v1/comment/create [post]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary create comment
 // @Tags Comment
 // @Description Create Comment
@@ -71,7 +71,7 @@ func (h *handlerV1) CreateComment(c *gin.Context) {
 
 // Get All Comments By Post Id
 // @Router /v1/comment/post/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary get all comments by post id
 // @Tags Comment
 // @Description Get all comments by post id
@@ -106,7 +106,7 @@ func (h *handlerV1) GetAllCommentsByPostId(c *gin.Context) {
 
 // Get All Comments By Owner Id
 // @Router /v1/comment/owner/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary get all comments by owner id
 // @Tags Comment
 // @Description Get all comments by owner id

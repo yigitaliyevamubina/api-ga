@@ -8,6 +8,9 @@ import (
 	"apii_gateway/storage/redis"
 	"fmt"
 
+	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
+
 	rds "github.com/gomodule/redigo/redis"
 )
 
@@ -32,11 +35,29 @@ func main() {
 		},
 	}
 
+
+	psqlString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", "localhost", 5432, "postgres", "mubina2007", "postgres")
+
+
+	_, err = gormadapter.NewAdapter("postgres", psqlString, true)
+	if err != nil {
+		log.Fatal("error while updating new adapter", logger.Error(err))
+		return
+	}
+
+	enforcer, err := casbin.NewEnforcer(cfg.AuthConfigPath, cfg.AuthCSVPath)
+	if err != nil {
+		log.Error("cannot create a new enforcer", logger.Error(err))
+		return
+	}
+
+
 	server := api.New(api.Option{
 		InMemory:       redis.NewRedisRepo(&redisPool),
 		Cfg:            cfg,
 		Logger:         log,
 		ServiceManager: serviceManager,
+		CasbinEnforser: enforcer,
 	})
 
 	if err := server.Run(cfg.HTTPPort); err != nil {

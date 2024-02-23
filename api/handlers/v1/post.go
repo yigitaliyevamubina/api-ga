@@ -21,7 +21,7 @@ import (
 
 // Create Post
 // @Router /v1/post/create [post]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary create post
 // @Tags Post
 // @Description Create Post
@@ -71,7 +71,7 @@ func (h *handlerV1) CreatePost(c *gin.Context) {
 
 // Update User
 // @Router /v1/post/update [put]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary update post
 // @Tags Post
 // @Description Update Post
@@ -123,7 +123,7 @@ func (h *handlerV1) UpdatePost(c *gin.Context) {
 
 // Delete User
 // @Router /v1/post/delete/{id} [delete]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary delete post
 // @Tags Post
 // @Description Delete Post
@@ -160,7 +160,7 @@ func (h *handlerV1) DeletePost(c *gin.Context) {
 
 // Get Post By Id
 // @Router /v1/post/get/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary get post
 // @Tags Post
 // @Description Get Post
@@ -195,7 +195,7 @@ func (h *handlerV1) GetPostById(c *gin.Context) {
 
 // Get All Posts By Owner Id
 // @Router /v1/post/owner/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary get posts by owner id
 // @Tags Post
 // @Description Get Posts by owner id

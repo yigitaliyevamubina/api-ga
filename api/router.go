@@ -10,6 +10,9 @@ import (
 	"apii_gateway/services"
 	"apii_gateway/storage/repo"
 
+	// casb "apii-gateway/middleware/casbin"
+
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -21,6 +24,7 @@ type Option struct {
 	Cfg            config.Config
 	Logger         logger.Logger
 	ServiceManager services.IServiceManager
+	CasbinEnforser *casbin.Enforcer
 }
 
 // New -> constructor
@@ -28,7 +32,7 @@ type Option struct {
 // @version 1.0
 // @description In this swagger documentation you can test all of your microservices
 // @host localhost:5555
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 func New(option Option) *gin.Engine {
@@ -48,6 +52,7 @@ func New(option Option) *gin.Engine {
 		ServiceManager:  option.ServiceManager,
 		Cfg:             option.Cfg,
 		JWTHandler:      jwtHandle,
+		CasbinEnforcer:  option.CasbinEnforser,
 	})
 
 	api := router.Group("/v1")

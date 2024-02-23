@@ -347,7 +347,7 @@ func (h *handlerV1) Login(c *gin.Context) {
 
 // CreateUser
 // @Router /v1/user/create [post]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary create user
 // @Tags User
 // @Description Create a new user with the provided details
@@ -398,7 +398,7 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 
 // Get User By Id
 // @Router /v1/user/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary get user by id
 // @Tags User
 // @Description Get user
@@ -433,7 +433,7 @@ func (h *handlerV1) GetUserById(c *gin.Context) {
 
 // Update User
 // @Router /v1/user/update [put]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary update user
 // @Tags User
 // @Description Update user
@@ -484,7 +484,7 @@ func (h *handlerV1) UpdateUser(c *gin.Context) {
 
 // Delete User
 // @Router /v1/user/delete/{id} [delete]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary delete user
 // @Tags User
 // @Description Delete user
@@ -521,7 +521,7 @@ func (h *handlerV1) DeleteUser(c *gin.Context) {
 
 // Get All Users with Posts and Comments
 // @Router /v1/users [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary get all users with posts and comments
 // @Tags User
 // @Description get all users
@@ -551,7 +551,7 @@ func (h *handlerV1) GetAllUsers(c *gin.Context) {
 
 // Update Access token
 // @Router /v1/user/refresh [post]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary update access token
 // @Tags User
 // @Description get access token updated
@@ -580,6 +580,12 @@ func (h *handlerV1) UpdateRefreshToken(c *gin.Context) {
 	defer cancel()
 
 	userId, err := h.serviceManager.UserService().GetUserIdByRefreshToken(ctx, &pb.RefreshReq{RefreshToken: body.RefreshToken})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError ,gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
 	h.jwtHandler = tokens.JWTHandler{
 		Sub:       userId.UserId,

@@ -32,6 +32,8 @@ type Config struct {
 
 	AccessTokenTimeout  int //minutes
 	RefreshTokenTimeout int //hours
+	AuthConfigPath      string
+	AuthCSVPath         string
 
 	SignInKey string
 }
@@ -66,6 +68,9 @@ func Load() Config {
 	c.CtxTimeOut = cast.ToInt(getOrReturnDefault("CTX_TIMEOUT", 7))
 
 	c.SignInKey = cast.ToString(getOrReturnDefault("SIGN_IN_KEY", "AAAAKWEFWEKkfkw"))
+
+	c.AuthConfigPath = cast.ToString(getOrReturnDefault("AUTH_CONFIG_PATH", "./config/auth.conf"))
+	c.AuthCSVPath = cast.ToString(getOrReturnDefault("AUTH_CSV_PATH", "./config/auth.csv"))
 
 	return c
 }

@@ -13,3 +13,6 @@ lint: ## Run golangci-lint with printing to stdout
 
 swag-gen:
 	~/go/bin/swag init -g ./api/router.go -o api/docs
+
+g:
+	go run cmd/main.go

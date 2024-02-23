@@ -18,7 +18,7 @@ import (
 //rpc GetLikeOwnersByCommentId(GetCommentId) returns (Comment);
 
 // @Router /v1/like/post [post]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary like post
 // @Tags Like
 // @Description Like post
@@ -65,7 +65,7 @@ func (h *handlerV1) LikePost(c *gin.Context) {
 }
 
 // @Router /v1/like/comment [post]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary like comment
 // @Tags Like
 // @Description Like comment
@@ -115,7 +115,7 @@ func (h *handlerV1) LikeComment(c *gin.Context) {
 }
 
 // @Router /v1/like/post/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary like owners by post id
 // @Tags Like
 // @Description Like owners by post id
@@ -150,7 +150,7 @@ func (h *handlerV1) GetLikeOwnersByPostId(c *gin.Context) {
 }
 
 // @Router /v1/like/comment/{id} [get]
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Summary like owners by comment id
 // @Tags Like
 // @Description Like owners by comment id

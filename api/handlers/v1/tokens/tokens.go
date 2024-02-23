@@ -88,12 +88,13 @@ func ExtractClaim(tokenStr string, signinKey []byte) (jwt.MapClaims, error) {
 	token, err = jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		return signinKey, nil
 	})
-	if err != nil {
+
+	if !token.Valid {
 		return nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	if !(ok && token.Valid) {
+	if !ok {
 		return nil, err
 	}
 	return claims, nil
