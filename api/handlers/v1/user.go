@@ -114,7 +114,16 @@ func (h *handlerV1) Register(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(respUser)
+	//*kafka*\\
+	err = h.producer.ProduceMessages("topic-test", userJson)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		h.log.Error("cannot produce messages via kafka", logger.Error(err))
+		return
+	}
+	//*kafka*\\
 
 	timeOut := time.Second * 1000
 
@@ -581,7 +590,7 @@ func (h *handlerV1) UpdateRefreshToken(c *gin.Context) {
 
 	userId, err := h.serviceManager.UserService().GetUserIdByRefreshToken(ctx, &pb.RefreshReq{RefreshToken: body.RefreshToken})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError ,gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return

@@ -13,6 +13,40 @@ definitions:
       user_id:
         type: string
     type: object
+  models.AddPolicyRequest:
+    properties:
+      policy:
+        $ref: '#/definitions/models.Policy'
+    type: object
+  models.AdminLoginReq:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.AdminLoginResp:
+    properties:
+      access_token:
+        type: string
+    type: object
+  models.AdminReq:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
   models.AllUsers:
     properties:
       users:
@@ -45,6 +79,20 @@ definitions:
           $ref: '#/definitions/models.Comment'
         type: array
     type: object
+  models.DeleteAdmin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.ListRolePolicyResp:
+    properties:
+      policies:
+        items:
+          $ref: '#/definitions/models.Policy'
+        type: array
+    type: object
   models.LoginRequest:
     properties:
       email:
@@ -61,6 +109,15 @@ definitions:
       id:
         type: string
       last_name:
+        type: string
+    type: object
+  models.Policy:
+    properties:
+      endpoint:
+        type: string
+      method:
+        type: string
+      role:
         type: string
     type: object
   models.Post:
@@ -86,6 +143,13 @@ definitions:
       posts:
         items:
           $ref: '#/definitions/models.Post'
+        type: array
+    type: object
+  models.RbacAllRolesResp:
+    properties:
+      roles:
+        items:
+          type: string
         type: array
     type: object
   models.RegisterRespUser:
@@ -147,6 +211,11 @@ definitions:
       liked:
         type: boolean
     type: object
+  models.SuperAdminMessage:
+    properties:
+      message:
+        type: string
+    type: object
   models.User:
     properties:
       age:
@@ -190,13 +259,109 @@ definitions:
       message:
         type: string
     type: object
-host: localhost:5555
+host: localhost:5551
 info:
   contact: {}
-  description: In this swagger documentation you can test all of your microservices
+  description: microservice
   title: Welcome to services
   version: "1.0"
 paths:
+  /v1/auth/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new admin if you are a superadmin
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: admin
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminReq'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: create admin
+      tags:
+      - Auth
+  /v1/auth/delete:
+    delete:
+      consumes:
+      - application/json
+      description: delete admin if you are a superadmin
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: admin
+        in: body
+        name: admin
+        required: true
+        schema:
+          $ref: '#/definitions/models.DeleteAdmin'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: delete admin
+      tags:
+      - Auth
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: login as admin
+      parameters:
+      - description: Login
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.AdminLoginReq'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.AdminLoginResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      summary: login
+      tags:
+      - Auth
   /v1/comment/create:
     post:
       consumes:
@@ -574,6 +739,143 @@ paths:
       summary: update post
       tags:
       - Post
+  /v1/rbac/add/policy:
+    post:
+      consumes:
+      - application/json
+      description: Add policy to a role
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: policy
+        in: body
+        name: policy
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPolicyRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: add policy to a role
+      tags:
+      - RBAC
+  /v1/rbac/delete/policy:
+    delete:
+      consumes:
+      - application/json
+      description: Delete policy
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: policy
+        in: body
+        name: policy
+        required: true
+        schema:
+          $ref: '#/definitions/models.AddPolicyRequest'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.SuperAdminMessage'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: delete policy
+      tags:
+      - RBAC
+  /v1/rbac/policies/{role}:
+    get:
+      consumes:
+      - application/json
+      description: Get all policies of a role
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      - description: role
+        in: path
+        name: role
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.ListRolePolicyResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get all policies of a role
+      tags:
+      - RBAC
+  /v1/rbac/roles:
+    get:
+      consumes:
+      - application/json
+      description: Get all roles
+      parameters:
+      - description: super-username
+        in: query
+        name: super-username
+        required: true
+        type: string
+      - description: super-password
+        in: query
+        name: super-password
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.RbacAllRolesResp'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: get all roles
+      tags:
+      - RBAC
   /v1/user/{id}:
     get:
       consumes:

@@ -4,7 +4,9 @@ import (
 	t "apii_gateway/api/handlers/v1/tokens"
 	"apii_gateway/config"
 	"apii_gateway/pkg/logger"
+	"apii_gateway/queue/producer"
 	"apii_gateway/services"
+	admin "apii_gateway/storage/postgresrepo"
 	"apii_gateway/storage/repo"
 
 	"github.com/casbin/casbin/v2"
@@ -16,7 +18,9 @@ type handlerV1 struct {
 	serviceManager  services.IServiceManager
 	cfg             config.Config
 	jwtHandler      t.JWTHandler
-	casbinEnforcer *casbin.Enforcer
+	postgres        admin.AdminStorageI
+	casbin          *casbin.Enforcer
+	producer        producer.Producer
 }
 
 type HandlerV1Config struct {
@@ -25,7 +29,9 @@ type HandlerV1Config struct {
 	ServiceManager  services.IServiceManager
 	Cfg             config.Config
 	JWTHandler      t.JWTHandler
-	CasbinEnforcer *casbin.Enforcer
+	Postgres        admin.AdminStorageI
+	Casbin          *casbin.Enforcer
+	Producer        producer.Producer
 }
 
 func New(c *HandlerV1Config) *handlerV1 {
@@ -35,6 +41,9 @@ func New(c *HandlerV1Config) *handlerV1 {
 		serviceManager:  c.ServiceManager,
 		cfg:             c.Cfg,
 		jwtHandler:      c.JWTHandler,
-		casbinEnforcer: c.CasbinEnforcer,
+		postgres:        c.Postgres,
+		casbin:          c.Casbin,
+		producer:        c.Producer,
 	}
+
 }

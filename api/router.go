@@ -1,18 +1,24 @@
 package api
 
 import (
+	casb "apii_gateway/api/casbin"
 	_ "apii_gateway/api/docs"
 	v1 "apii_gateway/api/handlers/v1"
 	"apii_gateway/api/handlers/v1/tokens"
-	"apii_gateway/api/middleware"
 	"apii_gateway/config"
 	"apii_gateway/pkg/logger"
+	"apii_gateway/queue/producer"
 	"apii_gateway/services"
 	"apii_gateway/storage/repo"
+	"fmt"
 
 	// casb "apii-gateway/middleware/casbin"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
+
+	admin "apii_gateway/storage/postgresrepo"
 
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/util"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -24,18 +30,45 @@ type Option struct {
 	Cfg            config.Config
 	Logger         logger.Logger
 	ServiceManager services.IServiceManager
-	CasbinEnforser *casbin.Enforcer
+	Postgres       admin.AdminStorageI
+	Producer       producer.Producer
 }
 
 // New -> constructor
 // @title Welcome to services
 // @version 1.0
-// @description In this swagger documentation you can test all of your microservices
-// @host localhost:5555
+// @description microservice
+// @host localhost:5551
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 func New(option Option) *gin.Engine {
+	fmt.Println("+++")
+	psqlString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		option.Cfg.PostgresHost,
+		option.Cfg.PostgresPort,
+		option.Cfg.PostgresUser,
+		option.Cfg.PostgresPassword,
+		option.Cfg.PostgresDatabase)
+
+	adapter, err := gormadapter.NewAdapter("postgres", psqlString, true)
+	if err != nil {
+		option.Logger.Fatal("error while updating new adapter", logger.Error(err))
+	}
+
+	casbinEnforcer, err := casbin.NewEnforcer(option.Cfg.AuthConfigPath, adapter)
+	if err != nil {
+		option.Logger.Error("cannot create a new enforcer", logger.Error(err))
+	}
+
+	err = casbinEnforcer.LoadPolicy()
+	if err != nil {
+		panic(err)
+	}
+
+	casbinEnforcer.GetRoleManager().AddMatchingFunc("keyMatch", util.KeyMatch)
+	casbinEnforcer.GetRoleManager().AddMatchingFunc("keyMatch3", util.KeyMatch3)
+
 	router := gin.New()
 
 	router.Use(gin.Logger())
@@ -52,39 +85,53 @@ func New(option Option) *gin.Engine {
 		ServiceManager:  option.ServiceManager,
 		Cfg:             option.Cfg,
 		JWTHandler:      jwtHandle,
-		CasbinEnforcer:  option.CasbinEnforser,
+		Postgres:        option.Postgres,
+		Casbin:          casbinEnforcer,
+		Producer:        option.Producer,
 	})
 
 	api := router.Group("/v1")
 
-	api.Use(middleware.Auth)
+	api.Use(casb.NewAuth(casbinEnforcer, option.Cfg))
+
+	//rbac
+	api.GET("/rbac/roles", handlerV1.ListAllRoles)              //superadmin
+	api.GET("/rbac/policies/:role", handlerV1.ListRolePolicies) //superadmin
+	api.POST("/rbac/add/policy", handlerV1.AddPolicyToRole)     //superadmin
+	api.DELETE("/rbac/delete/policy", handlerV1.DeletePolicy)   //superadmin
+
 	//users
-	api.POST("/user/create", handlerV1.CreateUser)
-	api.POST("/user/register", handlerV1.Register)
-	api.GET("/user/:id", handlerV1.GetUserById)
-	api.PUT("/user/update", handlerV1.UpdateUser)
-	api.DELETE("/user/delete/:id", handlerV1.DeleteUser)
-	api.GET("/users", handlerV1.GetAllUsers)
-	api.GET("/user/verify/:email/:code", handlerV1.Verify)
-	api.POST("/user/login", handlerV1.Login)
+	api.POST("/user/create", handlerV1.CreateUser)         //admin
+	api.POST("/user/register", handlerV1.Register)         //unauthorized
+	api.GET("/user/:id", handlerV1.GetUserById)            //user
+	api.PUT("/user/update", handlerV1.UpdateUser)          //user
+	api.DELETE("/user/delete/:id", handlerV1.DeleteUser)   //admin
+	api.GET("/users", handlerV1.GetAllUsers)               //admin
+	api.GET("/user/verify/:email/:code", handlerV1.Verify) //unauthorized
+	api.POST("/user/login", handlerV1.Login)               //unauthorized
 
 	//posts
-	api.POST("/post/create", handlerV1.CreatePost)
-	api.GET("/post/get/:id", handlerV1.GetPostById)
-	api.PUT("/post/update/:id", handlerV1.UpdatePost)
-	api.DELETE("/post/delete/:id", handlerV1.DeletePost)
-	api.GET("/post/owner/:id", handlerV1.GetPostsByOwnerId)
+	api.POST("/post/create", handlerV1.CreatePost)          //user
+	api.GET("/post/get/:id", handlerV1.GetPostById)         //user
+	api.PUT("/post/update/:id", handlerV1.UpdatePost)       //user
+	api.DELETE("/post/delete/:id", handlerV1.DeletePost)    //user
+	api.GET("/post/owner/:id", handlerV1.GetPostsByOwnerId) //user
 
 	//comments
-	api.POST("/comment/create", handlerV1.CreateComment)
-	api.GET("/comment/post/:id", handlerV1.GetAllCommentsByPostId)
-	api.GET("/comment/owner/:id", handlerV1.GetAllCommentsByOwnerId)
+	api.POST("/comment/create", handlerV1.CreateComment)             //user
+	api.GET("/comment/post/:id", handlerV1.GetAllCommentsByPostId)   //user
+	api.GET("/comment/owner/:id", handlerV1.GetAllCommentsByOwnerId) //user
 
 	//likes
-	api.POST("/like/post", handlerV1.LikePost)
-	api.POST("/like/comment", handlerV1.LikeComment)
-	api.GET("/like/post/:id", handlerV1.GetLikeOwnersByPostId)
-	api.GET("/like/comment/:id", handlerV1.GetLikeOwnersByCommentId)
+	api.POST("/like/post", handlerV1.LikePost)                       //user
+	api.POST("/like/comment", handlerV1.LikeComment)                 //user
+	api.GET("/like/post/:id", handlerV1.GetLikeOwnersByPostId)       //user
+	api.GET("/like/comment/:id", handlerV1.GetLikeOwnersByCommentId) //user
+
+	//admin
+	api.POST("/auth/create", handlerV1.CreateAdmin)   //superadmin
+	api.DELETE("/auth/delete", handlerV1.DeleteAdmin) //superadmin
+	api.POST("/auth/login", handlerV1.LoginAdmin)     //admin
 
 	url := ginSwagger.URL("swagger/doc.json")
 	api.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

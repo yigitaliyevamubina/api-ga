@@ -1,25 +1,27 @@
 p, unauthorized, /v1/swagger/*, GET
-p, unauthorized, /v1/register, POST
-p, unauthorized, /v1/login, POST
-
-p, user, /v1/user/create, POST
+p, unauthorized, /v1/verify/{email}/{code}, POST
+p, unauthorized, /v1/user/register, POST
+p, unauthorized, /v1/user/login, POST
+p, unauthorized, /v1/auth/login, POST
 p, user, /v1/user/{id}, GET
 p, user, /v1/user/update, PUT
-p, user, /v1/user/delete/{id}, DELETE
-p, user, /v1/users, GET
-p, user, /v1/verify/{email}/{code}, POST
-
 p, user, /v1/post/create, POST
 p, user, /v1/post/get/{id}, GET
 p, user, /v1/post/update/{id}, PUT
 p, user, /v1/post/delete/{id}, DELETE
-p, user, /v1/owner/{id}, GET
-
+p, user, /v1/post/owner/{id}, GET
 p, user, /v1/comment/create, POST
 p, user, /v1/comment/post/{id}, GET
 p, user, /v1/comment/owner/{id}, GET
-
 p, user, /v1/like/post, POST
 p, user, /v1/like/comment, POST
 p, user, /v1/like/post/{id}, GET
 p, user, /v1/like/comment/{id}, GET
+g, admin, user, *
+p, admin, /v1/user/create, POST
+p, admin, /v1/user/delete/{id}, DELETE
+p, admin, /v1/users, GET
+g, superadmin, admin, *
+p, superadmin, /v1/auth/create, POST
+p, superadmin, /v1/auth/delete, DELETE
+user ->  admin -> superadmin
