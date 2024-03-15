@@ -115,7 +115,7 @@ func (h *handlerV1) Register(c *gin.Context) {
 	}
 
 	//*kafka*\\
-	err = h.producer.ProduceMessages("topic-test", userJson)
+	err = h.producer.ProduceMessages("template", userJson)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -142,7 +142,7 @@ func (h *handlerV1) Register(c *gin.Context) {
 		From:     from,
 		Password: password,
 		To:       respUser.Email,
-		Message:  fmt.Sprintf("Hi %s,", respUser.FirstName),
+		Message:  fmt.Sprintf("Hi, %s", respUser.FirstName),
 		Code:     respUser.Code,
 	})
 
@@ -363,7 +363,7 @@ func (h *handlerV1) Login(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param UserInfo body models.User true "Create user"
-// @Success 201 {object} models.User
+// @Success 201 {object} models.UserModel
 // @Failure 400 string Error models.Error
 // @Failure 500 string Error models.Error
 func (h *handlerV1) CreateUser(c *gin.Context) {
@@ -382,27 +382,116 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 		return
 	}
 
+	body.Password, err = etc.HashPassword(body.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		h.log.Error("cannot hash the password", logger.Error(err))
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(h.cfg.CtxTimeOut))
 	defer cancel()
 
 	body.Id = uuid.New().String()
+	h.jwtHandler = tokens.JWTHandler{
+		Sub:       body.Id,
+		Role:      "user",
+		SignInKey: h.cfg.SignInKey,
+		Log:       h.log,
+		Timeout:   h.cfg.AccessTokenTimeout,
+	}
 
-	response, err := h.serviceManager.UserService().Create(ctx, &pb.User{
-		Id:        body.Id,
-		FirstName: body.FirstName,
-		LastName:  body.LastName,
-		Age:       body.Age,
-		Gender:    pb.Gender(body.Gender),
-	})
+	_, refresh, err := h.jwtHandler.GenerateAuthJWT()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		h.log.Error("cannot generate refresh token", logger.Error(err))
+		return
+	}
+
+	createReq := &pb.User{
+		Id:           body.Id,
+		FirstName:    body.FirstName,
+		LastName:     body.LastName,
+		Age:          body.Age,
+		Gender:       pb.Gender(body.Gender),
+		Email:        body.Email,
+		Password:     body.Password,
+		RefreshToken: refresh,
+	}
+
+	userJson, err := json.Marshal(createReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		h.log.Error("cannot marshal json", logger.Error(err))
+		return
+	}
+
+	//*rabbitmq*\\
+	// err = h.rabbit.ProduceMessages(h.cfg.RabbitQueue, userJson)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err.Error(),
+	// 	})
+	// 	return
+	// }
+	//*rabbitmq*\\
+
+	//*Kafka*\\
+	err = h.producer.ProduceMessages("test", userJson)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		h.log.Error("cannot produce messages", logger.Error(err))
+		return
+	}
+	//*Kafka*\\
+
+	response, err := h.serviceManager.UserService().Create(ctx, createReq)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		h.log.Error("cannot create user", logger.Error(err))
+		return
 	}
 
-	c.JSON(http.StatusCreated, response)
+	h.jwtHandler = tokens.JWTHandler{
+		Sub:       response.Id,
+		Role:      "user",
+		SignInKey: h.cfg.SignInKey,
+		Log:       h.log,
+		Timeout:   h.cfg.AccessTokenTimeout,
+	}
+
+	access, _, err := h.jwtHandler.GenerateAuthJWT()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		h.log.Error("cannot create access token", logger.Error(err))
+		return
+	}
+
+	userModel := models.UserModel{
+		Id:          response.Id,
+		FirstName:   response.FirstName,
+		LastName:    response.LastName,
+		Age:         response.Age,
+		Gender:      int32(response.Gender),
+		Email:       response.Email,
+		Password:    response.Password,
+		AccessToken: access,
+	}
+
+	c.JSON(http.StatusCreated, userModel)
 }
 
 // Get User By Id

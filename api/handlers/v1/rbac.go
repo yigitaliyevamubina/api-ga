@@ -75,7 +75,7 @@ func (h *handlerV1) ListRolePolicies(c *gin.Context) {
 		c.JSON(http.StatusOK, response)
 	} else {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"message": "you cannot grand permission to the admin role, provide correct username and password",
+			"message": "you cannot get policies of a role, provide correct username and password",
 		})
 	}
 }
@@ -126,7 +126,7 @@ func (h *handlerV1) AddPolicyToRole(c *gin.Context) {
 		})
 	} else {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"message": "you cannot grand permission to the admin role, provide correct username and password",
+			"message": "you cannot add policy, provide correct username and password",
 		})
 	}
 }
@@ -176,7 +176,7 @@ func (h *handlerV1) DeletePolicy(c *gin.Context) {
 		})
 	} else {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"message": "you cannot grand permission to the admin role, provide correct username and password",
+			"message": "you cannot delete policy, provide correct username and password",
 		})
 	}
 }

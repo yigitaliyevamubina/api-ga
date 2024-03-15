@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:5551",
+    "host": "localhost:3030",
     "paths": {
         "/v1/auth/create": {
             "post": {
@@ -1001,7 +1001,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.UserModel"
                         }
                     },
                     "400": {
@@ -1730,6 +1730,35 @@
         "models.User": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UserModel": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
                 "age": {
                     "type": "integer"
                 },

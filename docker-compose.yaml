@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq
+    container_name: rabbitmq
+    ports:
+      - "5673:5673"
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - db
+
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mubina2007
+      PGDATA: /data/postgres
+      POSTGRES_DB: userdb
+    volumes:
+      - db:/databasedata/postgres
+    ports:
+      - "5332:5332"
+    networks:
+      - db
+    restart: unless-stopped
+    healthcheck:  
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - db
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - db
+
+  user-service:
+    container_name: user-service
+    build: ../User-service-microservice
+    depends_on:
+      - db
+      - kafka
+      - rabbitmq
+      - post-service
+      - comment-service
+    ports:
+      - "7070:7070"
+    networks:
+      - db
+
+  post-service:
+    container_name: post-service
+    build: ../post-service
+    depends_on:
+      - db
+      - rabbitmq
+      - comment-service
+    ports:
+      - "8080:8080"
+    networks:
+      - db
+
+  comment-service:
+    container_name: comment-service
+    build: ../comment-service
+    depends_on:
+      - db
+      - rabbitmq
+    ports:
+      - "8088:8088"
+    networks:
+      - db
+
+  redisdb:
+    container_name: redisdb
+    image: redis
+    ports:
+      - "6380:6380"
+    restart: unless-stopped 
+    networks:
+      - db
+
+  api:
+    container_name: api
+    build: .
+    depends_on:
+      - post-service
+      - user-service
+      - comment-service
+      - redisdb
+      - db
+      - kafka
+      - rabbitmq
+    ports:
+      - "3030:3030"
+    networks:
+      - db
+
+  migrate:
+    image: migrate/migrate
+    networks:
+      - db
+    volumes:
+      - ./migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://postgres:mubina2007@db:5432/userdb?sslmode=disable", "up"]
+    depends_on:
+      - db
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
+  migrations:

@@ -179,7 +179,7 @@ func (h *handlerV1) DeleteAdmin(c *gin.Context) {
 			return
 		}
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
+			"message": resp.Error(),
 		})
 		return
 	}
@@ -214,14 +214,6 @@ func (h *handlerV1) LoginAdmin(c *gin.Context) {
 			"error": err.Error(),
 		})
 		h.log.Error("failed to bind json", logger.Error(err))
-		return
-	}
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		h.log.Error("cannot hash the password", logger.Error(err))
 		return
 	}
 

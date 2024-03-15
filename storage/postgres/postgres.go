@@ -44,7 +44,6 @@ func (r *adminRepo) Delete(userName, password string) error {
 		return err
 	}
 
-
 	if rowsAffected == 0 {
 		fmt.Println("error")
 		return errors.New("no rows were deleted")

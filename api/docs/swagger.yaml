@@ -233,6 +233,25 @@ definitions:
       password:
         type: string
     type: object
+  models.UserModel:
+    properties:
+      access_token:
+        type: string
+      age:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+    type: object
   models.UserWithPostsAndComments:
     properties:
       age:
@@ -259,7 +278,7 @@ definitions:
       message:
         type: string
     type: object
-host: localhost:5551
+host: localhost:3030
 info:
   contact: {}
   description: microservice
@@ -925,7 +944,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/models.UserModel'
         "400":
           description: Bad Request
           schema:

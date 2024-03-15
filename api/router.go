@@ -1,19 +1,18 @@
 package api
 
 import (
-	casb "apii_gateway/api/casbin"
+	// casb "apii_gateway/api/casbin"
 	_ "apii_gateway/api/docs"
 	v1 "apii_gateway/api/handlers/v1"
 	"apii_gateway/api/handlers/v1/tokens"
 	"apii_gateway/config"
 	"apii_gateway/pkg/logger"
 	"apii_gateway/queue/producer"
+	"apii_gateway/rabbitmq"
 	"apii_gateway/services"
 	"apii_gateway/storage/repo"
-	"fmt"
 
-	// casb "apii-gateway/middleware/casbin"
-	gormadapter "github.com/casbin/gorm-adapter/v3"
+	casb "apii_gateway/api/casbin"
 
 	admin "apii_gateway/storage/postgresrepo"
 
@@ -31,32 +30,32 @@ type Option struct {
 	Logger         logger.Logger
 	ServiceManager services.IServiceManager
 	Postgres       admin.AdminStorageI
-	Producer       producer.Producer
+	Producer       producer.KafkaProducer
+	Rabbit         rabbitmq.Producer
 }
 
 // New -> constructor
 // @title Welcome to services
 // @version 1.0
 // @description microservice
-// @host localhost:5551
+// @host localhost:3030
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 func New(option Option) *gin.Engine {
-	fmt.Println("+++")
-	psqlString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		option.Cfg.PostgresHost,
-		option.Cfg.PostgresPort,
-		option.Cfg.PostgresUser,
-		option.Cfg.PostgresPassword,
-		option.Cfg.PostgresDatabase)
+	// psqlString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// 	option.Cfg.PostgresHost,
+	// 	option.Cfg.PostgresPort,
+	// 	option.Cfg.PostgresUser,
+	// 	option.Cfg.PostgresPassword,
+	// 	option.Cfg.PostgresDatabase)
 
-	adapter, err := gormadapter.NewAdapter("postgres", psqlString, true)
-	if err != nil {
-		option.Logger.Fatal("error while updating new adapter", logger.Error(err))
-	}
+	// adapter, err := gormadapter.NewAdapter("postgres", psqlString, true)
+	// if err != nil {
+	// 	option.Logger.Fatal("error while updating new adapter", logger.Error(err))
+	// }
 
-	casbinEnforcer, err := casbin.NewEnforcer(option.Cfg.AuthConfigPath, adapter)
+	casbinEnforcer, err := casbin.NewEnforcer(option.Cfg.AuthConfigPath, option.Cfg.AuthCSVPath)
 	if err != nil {
 		option.Logger.Error("cannot create a new enforcer", logger.Error(err))
 	}
@@ -79,6 +78,17 @@ func New(option Option) *gin.Engine {
 		Log:       option.Logger,
 	}
 
+	// conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// channel, err := conn.Channel()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// rabbit := rabbitmq.NewRabbitMQProducer(channel)
+
 	handlerV1 := v1.New(&v1.HandlerV1Config{
 		InMemoryStorage: option.InMemory,
 		Log:             option.Logger,
@@ -88,6 +98,7 @@ func New(option Option) *gin.Engine {
 		Postgres:        option.Postgres,
 		Casbin:          casbinEnforcer,
 		Producer:        option.Producer,
+		// Rabbit:          option.Rabbit,
 	})
 
 	api := router.Group("/v1")

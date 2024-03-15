@@ -24,4 +24,3 @@ p, admin, /v1/users, GET
 g, superadmin, admin, *
 p, superadmin, /v1/auth/create, POST
 p, superadmin, /v1/auth/delete, DELETE
-user ->  admin -> superadmin

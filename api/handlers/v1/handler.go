@@ -5,6 +5,7 @@ import (
 	"apii_gateway/config"
 	"apii_gateway/pkg/logger"
 	"apii_gateway/queue/producer"
+	"apii_gateway/rabbitmq"
 	"apii_gateway/services"
 	admin "apii_gateway/storage/postgresrepo"
 	"apii_gateway/storage/repo"
@@ -20,7 +21,8 @@ type handlerV1 struct {
 	jwtHandler      t.JWTHandler
 	postgres        admin.AdminStorageI
 	casbin          *casbin.Enforcer
-	producer        producer.Producer
+	producer        producer.KafkaProducer
+	rabbit          rabbitmq.Producer
 }
 
 type HandlerV1Config struct {
@@ -31,7 +33,8 @@ type HandlerV1Config struct {
 	JWTHandler      t.JWTHandler
 	Postgres        admin.AdminStorageI
 	Casbin          *casbin.Enforcer
-	Producer        producer.Producer
+	Producer        producer.KafkaProducer
+	Rabbit          rabbitmq.Producer
 }
 
 func New(c *HandlerV1Config) *handlerV1 {
@@ -44,6 +47,7 @@ func New(c *HandlerV1Config) *handlerV1 {
 		postgres:        c.Postgres,
 		casbin:          c.Casbin,
 		producer:        c.Producer,
+		rabbit:          c.Rabbit,
 	}
 
 }
