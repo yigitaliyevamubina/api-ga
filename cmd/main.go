@@ -8,7 +8,7 @@ import (
 	"apii_gateway/pkg/logger"
 	"apii_gateway/queue/producer"
 
-	// "apii_gateway/rabbitmq"
+	"apii_gateway/rabbitmq"
 	"apii_gateway/services"
 	admin "apii_gateway/storage/postgres"
 	"apii_gateway/storage/redis"
@@ -18,7 +18,7 @@ import (
 	// gormadapter "github.com/casbin/gorm-adapter/v3"
 
 	rds "github.com/gomodule/redigo/redis"
-	// "github.com/streadway/amqp"
+	"github.com/streadway/amqp"
 )
 
 func main() {
@@ -59,16 +59,16 @@ func main() {
 	// 	panic(err)
 	// }
 
-	// conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-	// if err != nil {
-	// 	log.Fatal(err.Error())
-	// }
-	// channel, err := conn.Channel()
-	// if err != nil {
-	// 	log.Fatal(err.Error())
-	// }
+	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	channel, err := conn.Channel()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	// rabbit := rabbitmq.NewRabbitMQProducer(channel)
+	rabbit := rabbitmq.NewRabbitMQProducer(channel)
 	server := api.New(api.Option{
 		InMemory:       redis.NewRedisRepo(&redisPool),
 		Cfg:            cfg,
@@ -76,7 +76,7 @@ func main() {
 		ServiceManager: serviceManager,
 		Postgres:       admin.NewAdminRepo(db),
 		Producer:       writer,
-		// Rabbit:         rabbit,
+		Rabbit:         rabbit,
 	})
 
 	if err := server.Run(cfg.HTTPPort); err != nil {

@@ -73,7 +73,7 @@ func Load() Config {
 	c.CommentServiceHost = cast.ToString(getOrReturnDefault("COMMENT_SERVICE_HOST", "comment-service"))
 	c.CommentServicePort = cast.ToInt(getOrReturnDefault("COMMENT_SERVICE_PORT", 8088))
 
-	c.LikeServiceHost = cast.ToString(getOrReturnDefault("LIKE_SERVICE_HOST", "localhost"))
+	c.LikeServiceHost = cast.ToString(getOrReturnDefault("LIKE_SERVICE_HOST", "like-service"))
 	c.LikeServicePort = cast.ToInt(getOrReturnDefault("LIKE_SERVICE_PORT", 4040))
 
 	c.AccessTokenTimeout = cast.ToInt(getOrReturnDefault("ACCESS_TOKEN_TIMEOUT", 500))

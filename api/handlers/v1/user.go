@@ -433,13 +433,13 @@ func (h *handlerV1) CreateUser(c *gin.Context) {
 	}
 
 	//*rabbitmq*\\
-	// err = h.rabbit.ProduceMessages(h.cfg.RabbitQueue, userJson)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"error": err.Error(),
-	// 	})
-	// 	return
-	// }
+	err = h.rabbit.ProduceMessages(h.cfg.RabbitQueue, userJson)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 	//*rabbitmq*\\
 
 	//*Kafka*\\

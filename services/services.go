@@ -66,15 +66,18 @@ func NewServiceManager(cfg *config.Config) (IServiceManager, error) {
 	if err != nil {
 		return nil, err
 	}
-	// connLike, err := grpc.Dial(
-	// 	fmt.Sprintf("%s:%d", cfg.LikeServiceHost, cfg.LikeServicePort),
-	// 	grpc.WithTransportCredentials(insecure.NewCredentials()))
-
+	connLike, err := grpc.Dial(
+		fmt.Sprintf("%s:%d", cfg.LikeServiceHost, cfg.LikeServicePort),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	
 	serviceManager := &serviceManager{
 		userService:    pbu.NewUserServiceClient(connUser),
 		postService:    pbp.NewPostServiceClient(connPost),
 		commentService: pbc.NewCommentServiceClient(connComment),
-		// likeService:    pbl.NewLikeServiceClient(connLike),
+		likeService:    pbl.NewLikeServiceClient(connLike),
 	}
 	return serviceManager, nil
 }

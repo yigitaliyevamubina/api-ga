@@ -5,7 +5,8 @@ services:
     image: rabbitmq
     container_name: rabbitmq
     ports:
-      - "5673:5673"
+      - 5673:5673
+      - 15673:15673
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
@@ -64,7 +65,6 @@ services:
     depends_on:
       - db
       - kafka
-      - rabbitmq
       - post-service
       - comment-service
     ports:
@@ -77,7 +77,6 @@ services:
     build: ../post-service
     depends_on:
       - db
-      - rabbitmq
       - comment-service
     ports:
       - "8080:8080"
@@ -111,12 +110,23 @@ services:
       - post-service
       - user-service
       - comment-service
+      - like-service
       - redisdb
       - db
       - kafka
       - rabbitmq
     ports:
       - "3030:3030"
+    networks:
+      - db
+  
+  like-service:
+    container_name: like-service
+    build: ../like-service
+    depends_on:
+      - db
+    ports:
+      - "4040:4040"
     networks:
       - db
 
@@ -129,6 +139,7 @@ services:
     command: [ "-path", "/migrations", "-database",  "postgres://postgres:mubina2007@db:5432/userdb?sslmode=disable", "up"]
     depends_on:
       - db
+
 
 networks:
   db:
